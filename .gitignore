@@ -34,3 +34,5 @@ node_modules
 typings
 
 .DS_Store
+
+uploadFiles
