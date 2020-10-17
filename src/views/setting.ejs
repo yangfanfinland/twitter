@@ -1,0 +1,153 @@
+<%- include('layout/header', { title: 'Blog - Settings', isNav: true })%>
+
+<div class="container margin-top-20">
+    <div class="row">
+        <!-- Left -->
+        <div class="col-8">
+            <h5 class="margin-bottom-10">Basic information</h5>
+            <form>
+                <div class="form-group row">
+                    <label for="input-nick" class="col-sm-3 col-form-label">Nickname</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="input-nick" placeholder="Please fill in nickname" value="<%= nickName%>">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="input-city" class="col-sm-3 col-form-label">City</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control" id="input-city" placeholder="Please fill in city" value="<%= city%>">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="file-picture" class="col-sm-3 col-form-label">Avatar</label>
+                    <div class="col-sm-9">
+                        <img src="<%= picture%>" style="width: 100px;" class="margin-bottom-10" id="img-picture"/>
+                        <input type="file" class="form-control-file" accept="image/*" id="file-picture">
+                    </div>
+                </div>
+                <center><button type="submit" class="btn btn-primary" id="btn-submit-info">Save</button></center>
+            </form>
+
+            <hr/>
+            <h5 class="margin-bottom-10">Modify password</h5>
+            <form>
+                <div class="form-group row">
+                    <label for="input-cur-password" class="col-sm-3 col-form-label">Current password</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="input-cur-password" placeholder="Please fill in current password">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="input-new-password" class="col-sm-3 col-form-label">New password</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="input-new-password" placeholder="Please fill in new password">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="input-new-password-repeat" class="col-sm-3 col-form-label">Confirm password</label>
+                    <div class="col-sm-9">
+                        <input type="password" class="form-control" id="input-new-password-repeat" placeholder="Please confirm password">
+                    </div>
+                </div>
+                <center><button type="submit" class="btn btn-primary" id="btn-submit-password">Submit</button></center>
+            </form>
+
+            <hr/>
+            <center><button class="btn btn-danger"  id="btn-logout">Logout</button></center>
+
+        </div> <!-- Left end -->
+
+        <!-- Right -->
+        <div class="col-4">
+        </div> <!-- Right end -->
+    </div>
+</div>
+
+<script>
+$(function() {
+    // Upload avatar
+    var $imgPicture = $('#img-picture')
+    var $filePicture = $('#file-picture')
+    $filePicture.change(function (e) {
+        var file = $filePicture[0].files[0]
+        ajax.upload('/api/utils/upload', file, function(err, data) {
+            if (err) {
+                alert(err)
+                return
+            }
+            $imgPicture.attr('src', data.url)
+        })
+    })
+
+    // Modify basic info
+    var $inputNick = $('#input-nick')
+    var $inputCity = $('#input-city')
+    $('#btn-submit-info').click(function(e) {
+        e.preventDefault()
+        var nickName = $inputNick.val()
+        var city = $inputCity.val()
+        var picture = $imgPicture.attr('src')
+
+        ajax.patch('/api/user/changeInfo', {
+            nickName,
+            city,
+            picture
+        }, function(err, data) {
+            if (err) {
+                alert(err)
+                return
+            }
+            alert('Modify success')
+        })
+    })
+
+    // Modify password
+    var $inputCurPassword = $('#input-cur-password')
+    var $inputNewPassword = $('#input-new-password')
+    var $inputNewPasswordRepeat = $('#input-new-password-repeat')
+    $('#btn-submit-password').click(function(e) {
+        e.preventDefault()
+        var curPassword = $inputCurPassword.val()
+        var newPassword = $inputNewPassword.val()
+        var newPasswordRepeat = $inputNewPasswordRepeat.val()
+
+        if (newPassword !== newPasswordRepeat) {
+            alert('Password not matched')
+            return
+        }
+        if (curPassword === newPassword) {
+            return
+        }
+        
+        ajax.patch('/api/user/changePassword', {
+            password: curPassword,
+            newPassword: newPassword
+        }, function(err, data) {
+            if (err) {
+                alert(err)
+                return
+            }
+            alert('Modify success')
+            $inputCurPassword.val('')
+            $inputNewPassword.val('')
+            $inputNewPasswordRepeat.val('')
+        })
+    })
+
+    // Logout
+    $('#btn-logout').click(function() {
+        if (confirm('Confirm logout?') === false) {
+            return
+        }
+        ajax.post('/api/user/logout', function(err, data) {
+            if (err) {
+                console.error(err)
+                return
+            }
+            location.href = '/login'
+        })
+    })
+})
+</script>
+
+<%- include('layout/footer')%>
