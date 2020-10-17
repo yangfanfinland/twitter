@@ -1,0 +1,116 @@
+<%- include('layout/header', { title: 'Blog - Register', isNarrow: true })%>
+
+<h1>Regiser</h1>
+<% if (locals.isLogin) { %>
+    <p><%= locals.userName%> Login success，please visit <a href="/">Main</a> page</p>
+<% } else { %>
+    <form>
+        <div class="form-group">
+            <input type="text" class="form-control" id="input-username" placeholder="Please fill in username">
+            <small id="span-username-info" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" id="input-password" placeholder="Please fill in password">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" id="input-password-repeat" placeholder="Please confirm password">
+            <small id="span-password-repeat-info" class="form-text text-muted"></small>
+        </div>
+        <div class="form-group">
+            <select class="form-control" id="select-gender">
+                <option value="1">Men</option>
+                <option value="2">Women</option>
+                <option value="3">Secret</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Regiser</button>
+        &nbsp;
+        <a href="/login">Back to login if has account>></a>
+    </form>
+
+    <script>
+        $(function() {
+            var $inputUserName = $('#input-username')
+            var $spanUserNameInfo = $('#span-username-info')
+            var $inputPassword = $('#input-password')
+            var $inputPasswordRepeat = $('#input-password-repeat')
+            var $spanPasswordRepeatInfo = $('#span-password-repeat-info')
+            var $selectGender = $('#select-gender')
+            var userNameTimeoutId
+            var passwordTimeoutId
+            var isPasswordSame = false
+            var isUserNameExist = true
+
+            $inputUserName.on('input', function() {
+                if (userNameTimeoutId) {
+                    clearTimeout(userNameTimeoutId)
+                }
+                userNameTimeoutId = setTimeout(function() {
+                    var userName = $inputUserName.val()
+                    ajax.post('/api/user/isExist', {
+                        userName
+                    }, function(err, data) {
+                        $spanUserNameInfo.show()
+                        if (err) {
+                            $spanUserNameInfo.text('Username available!')
+                            isUserNameExist = false
+                        } else {
+                            $spanUserNameInfo.text('Username exists!')
+                            isUserNameExist = true
+                        }
+                    })
+                }, 500)
+            })
+
+            $inputPasswordRepeat.on('input', function () {
+                if (passwordTimeoutId) {
+                    clearTimeout(passwordTimeoutId)
+                }
+                passwordTimeoutId = setTimeout(function() {
+                    var password = $inputPassword.val()
+                    var passwordRepeat = $inputPasswordRepeat.val()
+                    $spanPasswordRepeatInfo.show()
+                    if (password === passwordRepeat) {
+                        $spanPasswordRepeatInfo.text('Password available!')
+                        isPasswordSame = true
+                    } else {
+                        $spanPasswordRepeatInfo.text('Password not matched')
+                        isPasswordSame = false
+                    }
+                }, 500)
+            })
+
+            $('#btn-submit').click(function(e) {
+                e.preventDefault()
+
+                if (isUserNameExist) {
+                    alert('Username exists!')
+                    return
+                }
+                if (!isPasswordSame) {
+                    alert('Password not matched')
+                    return
+                }
+
+                var userName = $inputUserName.val()
+                var password = $inputPassword.val()
+                var gender = parseInt($selectGender.val())
+
+                ajax.post('/api/user/register', {
+                    userName,
+                    password,
+                    gender
+                }, function(err, data) {
+                    if (err) {
+                        alert(err)
+                        return
+                    }
+                    alert('Register success, please login')
+                    location.href = '/login'
+                })
+            })
+        })
+    </script>
+<% } %>
+
+<%- include('layout/footer')%>

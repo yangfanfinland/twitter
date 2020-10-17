@@ -1,0 +1,44 @@
+<%- include('layout/header', { title: 'Blog - Login', isNarrow: true })%>
+
+<h1>Login</h1>
+<% if (locals.isLogin) { %>
+    <p><%= locals.userName%> Login success，please visit <a href="/">Main</a> page</p>
+<% } else { %>
+    <form>
+        <div class="form-group">
+            <input type="text" class="form-control" id="input-username" placeholder="Please fill in username">
+        </div>
+        <div class="form-group">
+            <input type="password" class="form-control" id="input-password" placeholder="Please fill in password">
+        </div>
+        <button type="submit" class="btn btn-primary" id="btn-submit">Login</button>
+        &nbsp;
+        <a href="/register">Register>></a>
+    </form>
+
+    <script>
+        $(function() {
+            var $inputUserName = $('#input-username')
+            var $inputPassword = $('#input-password')
+            $('#btn-submit').click(function(e) {
+                e.preventDefault()
+                const userName = $inputUserName.val()
+                const password = $inputPassword.val()
+
+                ajax.post('/api/user/login', {
+                    userName,
+                    password
+                }, function(err, data) {
+                    if (err) {
+                        alert(err)
+                        return
+                    }
+                    var redirectUrl = $.query.get('url') || '/'
+                    location.href = redirectUrl
+                })
+            })
+        })
+    </script>
+<% } %>
+
+<%- include('layout/footer')%>
