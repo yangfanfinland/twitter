@@ -5,7 +5,12 @@
 
 const { getUserInfo, createUser } = require('../services/user')
 const { SuccessModel, ErrorModel } = require('../model/ResModel')
-const { registerUserNameNotExistInfo } = require('../model/ErrorInfo')
+const { 
+  registerUserNameNotExistInfo,
+  registerUserNameExistInfo,
+  registerFailInfo,
+  loginFailInfo,
+} = require('../model/ErrorInfo')
 const doCrypto = require('../utils/cryp')
 
 /**
@@ -47,7 +52,27 @@ async function register({ userName, password, gender }) {
   }
 }
 
+/**
+ * User login
+ * @param {Object} ctx koa2 ctx
+ * @param {string} userName Username
+ * @param {string} password User pasword
+ */
+async function login(ctx, userName, password) {
+  const userInfo = await getUserInfo(userName, doCrypto(password))
+  if (!userInfo) {
+    return new ErrorModel(loginFailInfo)
+  }
+
+  // Save user info into session once login success
+  if (ctx.session.userInfo == null) {
+    ctx.session.userInfo = userInfo
+  }
+  return new SuccessModel()
+}
+
 module.exports = {
   isExist,
   register,
+  login,
 }
