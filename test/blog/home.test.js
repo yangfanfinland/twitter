@@ -69,6 +69,18 @@ test('Create blog success', async () => {
   BLOG_ID = res.body.data.id
 })
 
+// Load first page blog list
+test('Main page, load first page blog list', async () => {
+  const res = await server.get(`/api/blog/loadMore/0`).set('cookie', COOKIE)
+  expect(res.body.errno).toBe(0)
+  const data = res.body.data
+  expect(data).toHaveProperty('isEmpty')
+  expect(data).toHaveProperty('blogList')
+  expect(data).toHaveProperty('pageSize')
+  expect(data).toHaveProperty('pageIndex')
+  expect(data).toHaveProperty('count')
+})
+
 // Delete user
 test('Delete user success', async () => {
   const res = await server.post('/api/user/delete').set('cookie', COOKIE)
