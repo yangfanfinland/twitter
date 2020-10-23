@@ -5,6 +5,7 @@
 
 const { User } = require('../db/model/index')
 const { formatUser } = require('./_format')
+const { addFollower } = require('./user-relation')
 
 /**
  * Get user info
@@ -45,6 +46,9 @@ async function createUser({ userName, password, gender = 3, nickName }) {
     gender,
   })
   const data = result.dataValues
+
+  // Follow self (In order to get main page data)
+  addFollower(data.id, data.id)
 
   return data
 }
