@@ -8,7 +8,8 @@ const Blog = require('./Blog')
 const UserRelation = require('./UserRelation')
 
 Blog.belongsTo(User, {
-  foreignKey: 'userId'
+  foreignKey: 'userId',
+  onDelete: 'CASCADE',
 })
 
 UserRelation.belongsTo(User, {
