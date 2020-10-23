@@ -59,9 +59,40 @@ test('User login success', async () => {
   COOKIE = res.headers['set-cookie'].join(';')
 })
 
+// Modify user
+test('Modify user success', async () => {
+  const res = await server
+    .patch('/api/user/changeInfo')
+    .send({
+      nickName: 'Test nickname',
+      city: 'Test city',
+      picture: '/test.png',
+    })
+    .set('cookie', COOKIE)
+  expect(res.body.errno).toBe(0)
+})
+
+// Modify password
+test('Modify password success', async () => {
+  const res = await server
+    .patch('/api/user/changePassword')
+    .send({
+      password,
+      newPassword: `p_${Date.now()}`,
+    })
+    .set('cookie', COOKIE)
+  expect(res.body.errno).toBe(0)
+})
+
 // Delete user
 test('Delete user success', async () => {
   const res = await server.post('/api/user/delete').set('cookie', COOKIE)
+  expect(res.body.errno).toBe(0)
+})
+
+// Logout
+test('Logout success', async () => {
+  const res = await server.post('/api/user/logout').set('cookie', COOKIE)
   expect(res.body.errno).toBe(0)
 })
 
