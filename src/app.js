@@ -15,7 +15,8 @@ const { isProd } = require('./utils/env')
 const { SESSION_SECRET_KEY } = require('./conf/secretKeys')
 
 // Routers
-const index = require('./routes/index')
+const homeAPIRouter = require('./routes/api/blog-home')
+const blogViewRouter = require('./routes/view/blog')
 const utilsAPIRouter = require('./routes/api/utils')
 const userViewRouter = require('./routes/view/user')
 const userAPIRouter = require('./routes/api/user')
@@ -73,7 +74,8 @@ app.use(async (ctx, next) => {
 })
 
 // routes
-app.use(index.routes(), index.allowedMethods())
+app.use(homeAPIRouter.routes(), homeAPIRouter.allowedMethods())
+app.use(blogViewRouter.routes(), blogViewRouter.allowedMethods())
 app.use(utilsAPIRouter.routes(), utilsAPIRouter.allowedMethods())
 app.use(userViewRouter.routes(), userViewRouter.allowedMethods())
 app.use(userAPIRouter.routes(), userAPIRouter.allowedMethods())

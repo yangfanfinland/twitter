@@ -1,0 +1,81 @@
+<!-- Blog input -->
+<div class="margin-bottom-10 padding-bottom-10 border-bottom">
+    <textarea class="form-control" id="text-content" rows="3"></textarea>
+    <div class="margin-top-10">
+        <button class="btn btn-primary" id="btn-submit">Publish</button>
+        &nbsp;
+        <a href="#" id="btn-add-img">
+            <i class="fa fa-picture-o"></i>
+            Insert image
+        </a>
+        <input type="file" accept="image/*" id="file-picture" style="display: none;">
+        <input type="hidden" id="input-img-url">
+        &nbsp;
+        <span id="span-img-name"></span>
+    </div>
+</div>
+
+<script>
+$(function () {
+    var $spanImgName = $('#span-img-name')
+    var $inputImgUrl = $('#input-img-url')
+    var $textContent = $('#text-content')
+    var $filePicture = $('#file-picture')
+
+    // Upload image
+    $filePicture.change(function (e) {
+        var file = $filePicture[0].files[0]
+        $spanImgName.text(file.name)
+        ajax.upload('/api/utils/upload', file, function(err, data) {
+            if (err) {
+                alert(err)
+                return
+            }
+            $inputImgUrl.val(data.url)
+        })
+    })
+
+    // Insert image
+    $('#btn-add-img').click(function (e) {
+        e.preventDefault()
+        $filePicture.click()
+    })
+
+    // Publish blog
+    $('#btn-submit').click(function () {
+        var content = $textContent.val().trim()
+        var imgUrl = $inputImgUrl.val() || ''
+
+        // Validate
+        if (content.length === 0) {
+            alert('Please fill in blog content')
+            return
+        }
+
+        // Publish
+        ajax.post('/api/blog/create', {
+            content: content,
+            image: imgUrl
+        }, function (err) {
+            if (err) {
+                alert(err)
+                return
+            }
+            $filePicture.val('')
+            $spanImgName.text('')
+            $textContent.val('')
+            $inputImgUrl.val('')
+
+            // Refresh page
+            location.href = location.pathname
+        })
+    })
+
+    // @ function
+    $textContent.atwho({
+        at: '@',
+        data: '/api/user/getAtList'
+        // data: ['Peter', 'Tom', 'Anne']
+    })
+})
+</script>

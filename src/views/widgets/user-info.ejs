@@ -1,7 +1,63 @@
-<div>
-    <% if (isMe) { %>
-        <a hre="#">@ mentioned me(3)</a>
-    <% } else { %>
-        <button>Follow</button>
-    <% } %>
+<div class="user-info clear-fix">
+    <img src="<%= userInfo.picture%>" class="header-img float-left"/>
+    <h4 class="user-name"><%= userInfo.nickName%></h4>
 </div>
+
+<% if (isMe) { %>
+    <p class="bold margin-top-10">
+        <a href="/at-me">
+            @Mentioned me (<%= locals.atCount%>)
+        </a>
+    </p>
+<% } else { %>
+    <p class="margin-top-10">
+        <button id="btn-un-follow" class="btn btn-light" style="display: none;">Unfollow</button>
+        <button id="btn-follow" class="btn btn-primary" style="display: none;">Follow</button>
+    </p>
+<% } %>
+
+<script>
+$(function () {
+    var curUserId = <%= userInfo.id %> ;
+    var $btnFollow = $('#btn-follow')
+    var $btnUnFollow = $('#btn-un-follow')
+    if (<%= !isMe %>) {
+        if (<%= locals.amIFollowed %>) {
+            $btnUnFollow.show()
+        } else {
+            $btnFollow.show()
+        }
+    }
+
+    // Follow
+    $btnFollow.click(function () {
+        ajax.post('/api/profile/follow', {
+            userId: curUserId
+        }, function (err) {
+            if (err) {
+                alert(err)
+                return
+            }
+            $btnFollow.hide()
+            $btnUnFollow.show()
+        })
+    })
+
+    // Unfollow
+    $btnUnFollow.click(function () {
+        if (confirm('Confirm to unfollow?') === false) {
+            return
+        }
+        ajax.post('/api/profile/unFollow', {
+            userId: curUserId
+        }, function (err) {
+            if (err) {
+                alert(err)
+                return
+            }
+            $btnFollow.show()
+            $btnUnFollow.hide()
+        })
+    })
+})
+</script>

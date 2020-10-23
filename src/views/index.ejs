@@ -1,14 +1,67 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title><%= title %></title>
-    <link rel='stylesheet' href='/stylesheets/style.css' />
-  </head>
-  <body>
-    <h1><%= title %></h1>
-    <p>EJS Welcome to <%= title %></p>
+<%- include('layout/header', { title: 'Blog - Main', isNav: true, list: true, isInputBlog: true })%>
 
-    <%- include('widgets/user-info', { isMe }) %>
-    <%- include('widgets/blog-list', { blogList }) %>
-  </body>
-</html>
+<div class="container margin-top-20">
+    <div class="row">
+        <!-- Left start -->
+        <div class="col-8">
+            <!-- Input -->
+            <%- include('widgets/input')%>
+
+            <!-- Blog list -->
+            <% if (blogData.isEmpty) { %>
+                <div>
+                    <center>No data</center>
+                </div>
+            <% } else { %>
+                <!-- Blog list start -->
+                <div id="container-weibo-list" class="weibo-list">
+                    <%- include('widgets/blog-list', {
+                        blogList: blogData.blogList,
+                        canReply: true
+                    })%>
+                </div>
+                <!-- Blog list end -->
+                <!-- Load more start -->
+                <% if (blogData.count > blogData.blogList.length) { %>
+                    <%- include('widgets/load-more', {
+                        pageSize: blogData.pageSize,
+                        pageIndex: blogData.pageIndex,
+                        count: blogData.count,
+                        containerSelector: '#container-weibo-list',
+                        api: '/api/blog/loadMore',
+                    })%>
+                <% } %>
+                <!-- Load more end -->
+            <% } %>
+        </div>
+        <!-- Left end -->
+
+        <!-- Right start -->
+        <div class="col-4">
+            <!-- Personal info -->
+            <div class="right-item">
+                <%- include('widgets/user-info', {
+                    userInfo: userData.userInfo,
+                    isMe: true,
+                    amIFollowed: false,
+                    atCount: userData.atCount
+                });%>
+            </div>
+
+            <!-- Fans -->
+            <%- include('widgets/fans', {
+                count: userData.fansData.count,
+                userList: userData.fansData.list
+            })%>
+
+            <!-- Follow -->
+            <%- include('widgets/followers', {
+                count: userData.followersData.count,
+                userList: userData.followersData.list
+            })%>
+        </div>
+        <!-- Right end -->
+    </div>
+</div>
+
+<%- include('layout/footer')%>
