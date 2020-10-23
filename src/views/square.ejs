@@ -1,0 +1,38 @@
+<%- include('layout/header', { title: 'Blog - square', isNav: true, list: true })%>
+
+<div class="container margin-top-20">
+    <div class="row">
+        <!-- Left -->
+        <div class="col-8">
+            <h4 class="margin-bottom-20 padding-bottom-10 border-bottom">Blog square</h4>
+
+            <% if (blogData.isEmpty) { %>
+                <div>
+                    <center>No data</center>
+                </div>
+            <% } else { %>
+                <!-- Blog list -->
+                <div id="container-weibo-list" class="weibo-list">
+                    <%- include('widgets/blog-list', {
+                        blogList: blogData.blogList
+                    })%>
+                </div>
+                <!-- Blog list end -->
+                <!-- Load more -->
+                <% if (blogData.count > blogData.blogList.length) { %>
+                    <%- include('widgets/load-more', {
+                        pageSize: blogData.pageSize,
+                        pageIndex: blogData.pageIndex,
+                        count: blogData.count,
+                        containerSelector: '#container-weibo-list',
+                        api: '/api/square/loadMore',
+                    })%>
+                <% } %>
+                <!-- Load more end -->
+            <% } %>
+        </div>
+        <!-- Left end -->
+    </div>
+</div>
+
+<%- include('layout/footer')%>
