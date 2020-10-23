@@ -7,6 +7,8 @@ const router = require('koa-router')()
 const { loginRedirect } = require('../../middlewares/loginChecks')
 const { getProfileBlogList } = require('../../controller/blog-profile')
 const { getSquareBlogList } = require('../../controller/blog-square')
+const { isExist } = require('../../controller/user')
+const { getFans, getFollowers } = require('../../controller/user-relation')
 
 // Main page
 router.get('/', loginRedirect, async (ctx, next) => {
@@ -64,6 +66,19 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
   const result = await getProfileBlogList(curUserName, 0)
   const { isEmpty, blogList, pageSize, pageIndex, count } = result.data
 
+  // Get fans
+  const fansResult = await getFans(curUserInfo.id)
+  const { count: fansCount, fansList } = fansResult.data
+
+  // Get following list
+  const followersResult = await getFollowers(curUserInfo.id)
+  const { count: followersCount, followersList } = followersResult.data
+
+  // Whether I followed current user or not
+  const amIFollowed = fansList.some((item) => {
+    return item.userName === myUserName
+  })
+
   await ctx.render('profile', {
     blogData: {
       isEmpty,
@@ -74,16 +89,16 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
     },
     userData: {
       userInfo: curUserInfo,
-      isMe: true,
+      isMe,
       fansData: {
-        count: 0,
-        list: [],
+        count: fansCount,
+        list: fansList,
       },
       followersData: {
-        count: 0,
-        list: [],
+        count: followersCount,
+        list: followersList,
       },
-      amIFollowed: true,
+      amIFollowed,
       atCount: 0,
     },
   })

@@ -26,7 +26,7 @@ async function getSquareCacheList(pageIndex, pageSize) {
   // No cache, read from DB
   const result = await getBlogListByUser({ pageIndex, pageSize })
 
-  // 1min Set cache, expire 1 min
+  // Set cache, expire 1 min
   set(key, result, 60)
 
   return result

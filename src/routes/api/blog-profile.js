@@ -6,6 +6,7 @@
 const router = require('koa-router')()
 const { loginCheck } = require('../../middlewares/loginChecks')
 const { getProfileBlogList } = require('../../controller/blog-profile')
+const { follow, unFollow } = require('../../controller/user-relation')
 const { getBlogListStr } = require('../../utils/blog')
 
 router.prefix('/api/profile')
