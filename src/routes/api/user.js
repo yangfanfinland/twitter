@@ -51,6 +51,12 @@ router.post('/delete', loginCheck, async (ctx, next) => {
   }
 })
 
+// Delete user by userName
+router.post('/delete/:userName', loginCheck, async (ctx, next) => {
+  let { userName } = ctx.params
+  ctx.body = await deleteCurUser(userName)
+})
+
 // Modify personal info
 router.patch(
   '/changeInfo',

@@ -24,12 +24,6 @@ test('Register user success', async () => {
   expect(res.body.errno).toBe(0)
 })
 
-// Duplicate user register
-test('Failed with duplicate user register', async () => {
-  const res = await server.post('/api/user/register').send(testUser)
-  expect(res.body.errno).not.toBe(0)
-})
-
 // User exist
 test('User exist after registered success', async () => {
   const res = await server.post('/api/user/isExist').send({ userName })
