@@ -3,11 +3,7 @@
  * @author Fan Yang
  */
 
-const { 
-  getUserInfo, 
-  createUser,
-  deleteUser,
-} = require('../services/user')
+const { getUserInfo, createUser, deleteUser, updateUser } = require('../services/user')
 const { SuccessModel, ErrorModel } = require('../model/ResModel')
 const {
   registerUserNameNotExistInfo,
@@ -87,9 +83,42 @@ async function deleteCurUser(userName) {
   return new ErrorModel(deleteUserFailInfo)
 }
 
+/**
+ * Modify personal information
+ * @param {Object} ctx ctx
+ * @param {string} nickName
+ * @param {string} city
+ * @param {string} picture
+ */
+async function changeInfo(ctx, { nickName, city, picture }) {
+  const { userName } = ctx.session.userInfo
+  if (!nickName) {
+    nickName = userName
+  }
+
+  const result = await updateUser(
+    {
+      newNickName: nickName,
+      newCity: city,
+      newPicture: picture,
+    },
+    { userName }
+  )
+  if (result) {
+    Object.assign(ctx.session.userInfo, {
+      nickName,
+      city,
+      picture,
+    })
+    return new SuccessModel()
+  }
+  return new ErrorModel(changeInfoFailInfo)
+}
+
 module.exports = {
   isExist,
   register,
   login,
   deleteCurUser,
+  changeInfo
 }

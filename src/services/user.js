@@ -62,8 +62,42 @@ async function deleteUser(userName) {
   return result > 0
 }
 
+/**
+ * Update user info
+ * @param {Object} param0 Content to be updated { newPassword, newNickName, newPicture, newCity }
+ * @param {Object} param1 Query conditions { userName, password }
+ */
+async function updateUser({ newPassword, newNickName, newPicture, newCity }, { userName, password }) {
+  const updateData = {}
+  if (newPassword) {
+    updateData.password = newPassword
+  }
+  if (newNickName) {
+    updateData.nickName = newNickName
+  }
+  if (newPicture) {
+    updateData.picture = newPicture
+  }
+  if (newCity) {
+    updateData.city = newCity
+  }
+
+  const whereData = {
+    userName,
+  }
+  if (password) {
+    whereData.password = password
+  }
+
+  const result = await User.update(updateData, {
+    where: whereData,
+  })
+  return result[0] > 0
+}
+
 module.exports = {
   getUserInfo,
   createUser,
   deleteUser,
+  updateUser
 }
