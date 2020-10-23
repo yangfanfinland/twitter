@@ -20,7 +20,7 @@ const SCHEMA = {
 }
 
 /**
- * Validate blog data formate
+ * Validate blog data formate 
  * @param {Object} data Blog data
  */
 function blogValidate(data = {}) {
