@@ -7,8 +7,9 @@ const xss = require('xss')
 const { createBlog, getFollowersBlogList } = require('../services/blog')
 const { SuccessModel, ErrorModel } = require('../model/ResModel')
 const { createBlogFailInfo } = require('../model/ErrorInfo')
-const { PAGE_SIZE } = require('../conf/constant')
+const { PAGE_SIZE, REG_FOR_AT_WHO } = require('../conf/constant')
 const { getUserInfo } = require('../services/user')
+const { createAtRelation } = require('../services/at-relation')
 
 /**
  * Create blog
@@ -16,6 +17,19 @@ const { getUserInfo } = require('../services/user')
  */
 async function create({ userId, content, image }) {
   // Analyse and collect @user inside content
+  // content Formate as 'Hello @Elaine.yinran - tong Hi @Martin Holm - martin '
+  const atUserNameList = []
+  content = content.replace(REG_FOR_AT_WHO, (matchStr, nickName, userName) => {
+    atUserNameList.push(userName)
+    return matchStr
+  })
+
+  // Get user info base on @ user
+  const atUserList = await Promise.all(
+    atUserNameList.map((userName) => getUserInfo(userName))
+  )
+
+  const atUserIdList = atUserList.map((user) => user.id)
 
   try {
     const blog = await createBlog({
@@ -23,6 +37,12 @@ async function create({ userId, content, image }) {
       content: xss(content),
       image,
     })
+
+    // Create @ relationship
+    await Promise.all(
+      atUserIdList.map((userId) => createAtRelation(blog.id, userId))
+    )
+
     return new SuccessModel(blog)
   } catch (ex) {
     console.error(ex.message, ex.stack)
@@ -54,5 +74,5 @@ async function getHomeBlogList(userId, pageIndex = 0) {
 
 module.exports = {
   create,
-  getHomeBlogList
+  getHomeBlogList,
 }
