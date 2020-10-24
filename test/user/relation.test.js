@@ -4,7 +4,7 @@
  */
 
 const server = require('../server')
-const { getFans, getFollowers } = require('../../src/controller/user-relation')
+const { getFollowers, getFollowing } = require('../../src/controller/user-relation')
 
 // User info
 const userName1 = `u1_${Date.now()}`
@@ -101,9 +101,9 @@ test('User1 follow User2 success', async () => {
 
 // Get followers
 test('Get User2 followers, should contains User1', async () => {
-  const result = await getFans(USER2_ID)
-  const { count, fansList } = result.data
-  const hasUserName = fansList.some((fanInfo) => {
+  const result = await getFollowers(USER2_ID)
+  const { count, followersList } = result.data
+  const hasUserName = followersList.some((fanInfo) => {
     return fanInfo.userName === userName1
   })
   expect(count > 0).toBe(true)
@@ -112,9 +112,9 @@ test('Get User2 followers, should contains User1', async () => {
 
 // Get followings
 test('Get User1s followings, should cotains User2', async () => {
-  const result = await getFollowers(USER1_ID)
-  const { count, followersList } = result.data
-  const hasUserName = followersList.some((followerInfo) => {
+  const result = await getFollowing(USER1_ID)
+  const { count, followingList } = result.data
+  const hasUserName = followingList.some((followerInfo) => {
     return followerInfo.userName === userName2
   })
   expect(count > 0).toBe(true)

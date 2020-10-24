@@ -8,8 +8,13 @@ const { loginRedirect } = require('../../middlewares/loginChecks')
 const { getProfileBlogList } = require('../../controller/blog-profile')
 const { getSquareBlogList } = require('../../controller/blog-square')
 const { isExist } = require('../../controller/user')
-const { getFans, getFollowers } = require('../../controller/user-relation')
+const { getFollowers, getFollowing } = require('../../controller/user-relation')
 const { getHomeBlogList } = require('../../controller/blog-home')
+const {
+  getAtMeCount,
+  getAtMeBlogList,
+  markAsRead,
+} = require('../../controller/blog-at')
 
 // Main page
 router.get('/', loginRedirect, async (ctx, next) => {
@@ -20,26 +25,30 @@ router.get('/', loginRedirect, async (ctx, next) => {
   const result = await getHomeBlogList(userId)
   const { isEmpty, blogList, pageSize, pageIndex, count } = result.data
 
-  // Get fans
-  const fansResult = await getFans(userId)
-  const { count: fansCount, fansList } = fansResult.data
-
-  // Get following list
+  // Get followers
   const followersResult = await getFollowers(userId)
   const { count: followersCount, followersList } = followersResult.data
+
+  // Get following list
+  const followingResult = await getFollowing(userId)
+  const { count: followingCount, followingList } = followingResult.data
+
+  // Get @ amount
+  const atCountResult = await getAtMeCount(userId)
+  const { count: atCount } = atCountResult.data
 
   await ctx.render('index', {
     userData: {
       userInfo,
-      fansData: {
-        count: fansCount,
-        list: fansList,
-      },
       followersData: {
         count: followersCount,
         list: followersList,
       },
-      atCount: 0,
+      followingData: {
+        count: followingCount,
+        list: followingList,
+      },
+      atCount,
     },
     blogData: {
       isEmpty,
@@ -79,18 +88,22 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
   const result = await getProfileBlogList(curUserName, 0)
   const { isEmpty, blogList, pageSize, pageIndex, count } = result.data
 
-  // Get fans
-  const fansResult = await getFans(curUserInfo.id)
-  const { count: fansCount, fansList } = fansResult.data
-
-  // Get following list
+  // Get followers
   const followersResult = await getFollowers(curUserInfo.id)
   const { count: followersCount, followersList } = followersResult.data
 
+  // Get following list
+  const followingResult = await getFollowing(curUserInfo.id)
+  const { count: followingCount, followingList } = followingResult.data
+
   // Whether I followed current user or not
-  const amIFollowed = fansList.some((item) => {
+  const amIFollowed = followersList.some((item) => {
     return item.userName === myUserName
   })
+
+  // Get @ amount
+  const atCountResult = await getAtMeCount(myUserInfo.id)
+  const { count: atCount } = atCountResult.data
 
   await ctx.render('profile', {
     blogData: {
@@ -103,16 +116,16 @@ router.get('/profile/:userName', loginRedirect, async (ctx, next) => {
     userData: {
       userInfo: curUserInfo,
       isMe,
-      fansData: {
-        count: fansCount,
-        list: fansList,
-      },
       followersData: {
         count: followersCount,
         list: followersList,
       },
+      followingData: {
+        count: followingCount,
+        list: followingList,
+      },
       amIFollowed,
-      atCount: 0,
+      atCount,
     },
   })
 })
@@ -132,6 +145,35 @@ router.get('/square', loginRedirect, async (ctx, next) => {
       count,
     },
   })
+})
+
+// atMe router
+router.get('/at-me', loginRedirect, async (ctx, next) => {
+  const { id: userId } = ctx.session.userInfo
+
+  // Get @ amount
+  const atCountResult = await getAtMeCount(userId)
+  const { count: atCount } = atCountResult.data
+
+  // Get first page blog list
+  const result = await getAtMeBlogList(userId)
+  const { isEmpty, blogList, pageSize, pageIndex, count } = result.data
+
+  await ctx.render('atMe', {
+    atCount,
+    blogData: {
+      isEmpty,
+      blogList,
+      pageSize,
+      pageIndex,
+      count,
+    },
+  })
+
+  // Mark read
+  if (atCount > 0) {
+    await markAsRead(userId)
+  }
 })
 
 module.exports = router

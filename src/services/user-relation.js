@@ -11,7 +11,7 @@ const Sequelize = require('sequelize')
  * Get user's followers
  * @param {number} followerId 被关注人的 id
  */
-async function getUsersByFollower(followerId) {
+async function getUsersByFollowing(followerId) {
   const result = await User.findAndCountAll({
     attributes: ['id', 'userName', 'nickName', 'picture'],
     order: [['id', 'desc']],
@@ -41,7 +41,7 @@ async function getUsersByFollower(followerId) {
  * Get following list
  * @param {number} userId userId
  */
-async function getFollowersByUser(userId) {
+async function getFollowingByUser(userId) {
   const result = await UserRelation.findAndCountAll({
     order: [['id', 'desc']],
     include: [
@@ -78,7 +78,7 @@ async function getFollowersByUser(userId) {
  * @param {number} userId
  * @param {number} followerId 被关注用户 id
  */
-async function addFollower(userId, followerId) {
+async function addFollowing(userId, followerId) {
   const result = await UserRelation.create({
     userId,
     followerId,
@@ -91,7 +91,7 @@ async function addFollower(userId, followerId) {
  * @param {number} userId
  * @param {number} followerId 被关注用户 id
  */
-async function deleteFollower(userId, followerId) {
+async function deleteFollowing(userId, followerId) {
   const result = await UserRelation.destroy({
     where: {
       userId,
@@ -102,8 +102,8 @@ async function deleteFollower(userId, followerId) {
 }
 
 module.exports = {
-  getUsersByFollower,
-  getFollowersByUser,
-  addFollower,
-  deleteFollower,
+  getUsersByFollowing,
+  getFollowingByUser,
+  addFollowing,
+  deleteFollowing,
 }

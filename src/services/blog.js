@@ -60,7 +60,7 @@ async function getBlogListByUser({ userName, pageIndex = 0, pageSize = 10 }) {
  * Get following blog list (Main page)
  * @param {Object} param0 Query conditions { userId, pageIndex = 0, pageSize = 10 }
  */
-async function getFollowersBlogList({ userId, pageIndex = 0, pageSize = 10 }) {
+async function getFollowingBlogList({ userId, pageIndex = 0, pageSize = 10 }) {
   const result = await Blog.findAndCountAll({
     limit: pageSize,
     offset: pageSize * pageIndex,
@@ -94,5 +94,5 @@ async function getFollowersBlogList({ userId, pageIndex = 0, pageSize = 10 }) {
 module.exports = {
   createBlog,
   getBlogListByUser,
-  getFollowersBlogList,
+  getFollowingBlogList,
 }

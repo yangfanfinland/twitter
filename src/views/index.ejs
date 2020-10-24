@@ -48,16 +48,16 @@
                 });%>
             </div>
 
-            <!-- Fans -->
-            <%- include('widgets/fans', {
-                count: userData.fansData.count,
-                userList: userData.fansData.list
-            })%>
-
-            <!-- Follow -->
+            <!-- Followers -->
             <%- include('widgets/followers', {
                 count: userData.followersData.count,
                 userList: userData.followersData.list
+            })%>
+
+            <!-- Following -->
+            <%- include('widgets/following', {
+                count: userData.followingData.count,
+                userList: userData.followingData.list
             })%>
         </div>
         <!-- Right end -->

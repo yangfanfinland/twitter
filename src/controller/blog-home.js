@@ -4,7 +4,7 @@
  */
 
 const xss = require('xss')
-const { createBlog, getFollowersBlogList } = require('../services/blog')
+const { createBlog, getFollowingBlogList } = require('../services/blog')
 const { SuccessModel, ErrorModel } = require('../model/ResModel')
 const { createBlogFailInfo } = require('../model/ErrorInfo')
 const { PAGE_SIZE, REG_FOR_AT_WHO } = require('../conf/constant')
@@ -56,7 +56,7 @@ async function create({ userId, content, image }) {
  * @param {number} pageIndex page index
  */
 async function getHomeBlogList(userId, pageIndex = 0) {
-  const result = await getFollowersBlogList({
+  const result = await getFollowingBlogList({
     userId,
     pageIndex,
     pageSize: PAGE_SIZE,

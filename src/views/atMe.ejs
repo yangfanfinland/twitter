@@ -1,0 +1,45 @@
+<%- include('layout/header', { title: 'Blog - @ mentioned me', isNav: true, list: true, isInputBlog: true  })%>
+
+<div class="container margin-top-20">
+    <div class="row">
+        <!-- Left -->
+        <div class="col-8">
+            <h4 class="padding-bottom-10">
+                @ mentioned me (<%= atCount%> Unread)
+            </h4>
+
+            <!-- Input -->
+            <%- include('widgets/input')%>
+
+            <% if (blogData.isEmpty) { %>
+                <div>
+                    <center>No data</center>
+                </div>
+            <% } else { %>
+                <!-- Blog list -->
+                <div id="container-weibo-list" class="weibo-list">
+                    <%- include('widgets/blog-list', {
+                        blogList: blogData.blogList,
+                        canReply: true
+                    })%>
+                </div>
+                <!-- Blog list end -->
+                <!-- Load more -->
+                <% if (blogData.count > blogData.blogList.length) { %>
+                    <%- include('widgets/load-more', {
+                        pageSize: blogData.pageSize,
+                        pageIndex: blogData.pageIndex,
+                        count: blogData.count,
+                        containerSelector: '#container-weibo-list',
+                        api: '/api/atMe/loadMore',
+                    })%>
+                <% } %>
+                <!-- Load more end -->
+            <% } %>
+
+        </div>
+        <!-- Left end -->
+    </div>
+</div>
+
+<%- include('layout/footer')%>
