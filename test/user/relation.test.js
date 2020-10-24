@@ -43,13 +43,17 @@ test('Register user2 success', async () => {
 
 // User exist
 test('User1 exist after registered success', async () => {
-  const res = await server.post('/api/user/isExist').send({ userName: userName1 })
+  const res = await server
+    .post('/api/user/isExist')
+    .send({ userName: userName1 })
   expect(res.body.errno).toBe(0)
 
   USER1_ID = res.body.data.id
 })
 test('User2 exist after registered success', async () => {
-  const res = await server.post('/api/user/isExist').send({ userName: userName2 })
+  const res = await server
+    .post('/api/user/isExist')
+    .send({ userName: userName2 })
   expect(res.body.errno).toBe(0)
 
   USER2_ID = res.body.data.id
@@ -117,6 +121,17 @@ test('Get User1s followings, should cotains User2', async () => {
   expect(hasUserName).toBe(true)
 })
 
+// Get at list
+test('@ list of User1, should contains User2', async () => {
+  const res = await server.get('/api/user/getAtList').set('cookie', COOKIE1)
+  const atList = res.body
+  const hasUserName = atList.some((item) => {
+    // 'Nickname - userName'
+    return item.indexOf(`- ${userName2}`) > 0
+  })
+  expect(hasUserName).toBe(true)
+})
+
 // Unfollow
 test('User1 unfollow User2 success', async () => {
   const res = await server
@@ -128,15 +143,11 @@ test('User1 unfollow User2 success', async () => {
 
 // Delete user
 test('Delete user1 success', async () => {
-  const res = await server
-    .post('/api/user/delete')
-    .set('cookie', COOKIE1)
+  const res = await server.post('/api/user/delete').set('cookie', COOKIE1)
   expect(res.body.errno).toBe(0)
 })
 test('Delete user2 success', async () => {
-  const res = await server
-    .post(`/api/user/delete`)
-    .set('cookie', COOKIE2)
+  const res = await server.post(`/api/user/delete`).set('cookie', COOKIE2)
   expect(res.body.errno).toBe(0)
 })
 
@@ -152,10 +163,14 @@ test('User2 logout success', async () => {
 
 // User not exist
 test('User1 not exist after deleted success', async () => {
-  const res = await server.post('/api/user/isExist').send({ userName: userName1 })
+  const res = await server
+    .post('/api/user/isExist')
+    .send({ userName: userName1 })
   expect(res.body.errno).not.toBe(0)
 })
 test('User2 not exist after deleted success', async () => {
-  const res = await server.post('/api/user/isExist').send({ userName: userName2 })
+  const res = await server
+    .post('/api/user/isExist')
+    .send({ userName: userName2 })
   expect(res.body.errno).not.toBe(0)
 })
