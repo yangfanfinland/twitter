@@ -53,7 +53,7 @@
             </form>
 
             <hr/>
-            <center><button class="btn btn-danger"  id="btn-logout">Logout</button></center>
+            <!-- <center><button class="btn btn-danger"  id="btn-logout">Logout</button></center> -->
 
         </div> <!-- Left end -->
 
@@ -134,19 +134,19 @@ $(function() {
         })
     })
 
-    // Logout
-    $('#btn-logout').click(function() {
-        if (confirm('Confirm logout?') === false) {
-            return
-        }
-        ajax.post('/api/user/logout', function(err, data) {
-            if (err) {
-                console.error(err)
-                return
-            }
-            location.href = '/login'
-        })
-    })
+    // // Logout
+    // $('#btn-logout').click(function() {
+    //     if (confirm('Confirm logout?') === false) {
+    //         return
+    //     }
+    //     ajax.post('/api/user/logout', function(err, data) {
+    //         if (err) {
+    //             console.error(err)
+    //             return
+    //         }
+    //         location.href = '/login'
+    //     })
+    // })
 })
 </script>
 
