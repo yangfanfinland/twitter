@@ -4,7 +4,7 @@
  */
 
 const { DEFAULT_PICTURE, REG_FOR_AT_WHO } = require('../conf/constant')
-// const { timeFormat } = require('../utils/dt')
+const { timeFormat } = require('../utils/dt')
 
 /**
  * Default User avatar
@@ -40,8 +40,8 @@ function formatUser(list) {
  * @param {Object} obj data
  */
 function _formatDBTime(obj) {
-//   obj.createdAtFormat = timeFormat(obj.createdAt)
-//   obj.updatedAtFormat = timeFormat(obj.updatedAt)
+  obj.createdAtFormat = timeFormat(obj.createdAt)
+  obj.updatedAtFormat = timeFormat(obj.updatedAt)
   return obj
 }
 
