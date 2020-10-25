@@ -1,5 +1,5 @@
 /**
- * @description Main page API router
+ * @description Home page API router
  * @author Fan Yang
  */
 

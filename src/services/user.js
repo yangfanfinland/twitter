@@ -47,7 +47,7 @@ async function createUser({ userName, password, gender = 3, nickName }) {
   })
   const data = result.dataValues
 
-  // Follow self (In order to get main page data)
+  // Follow self (In order to get home page data)
   addFollowing(data.id, data.id)
 
   return data

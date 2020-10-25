@@ -1,5 +1,5 @@
 /**
- * @description Main page controller
+ * @description Home page controller
  * @author Fan Yang
  */
 
@@ -51,7 +51,7 @@ async function create({ userId, content, image }) {
 }
 
 /**
- * Get main page blog list
+ * Get homw page blog list
  * @param {number} userId userId
  * @param {number} pageIndex page index
  */

@@ -16,7 +16,7 @@ const {
   markAsRead,
 } = require('../../controller/blog-at')
 
-// Main page
+// Home page
 router.get('/', loginRedirect, async (ctx, next) => {
   const userInfo = ctx.session.userInfo
   const { id: userId } = userInfo

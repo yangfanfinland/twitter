@@ -1,5 +1,5 @@
 /**
- * @description Main page test
+ * @description Home page test
  * @author Fan Yang
  */
 
@@ -70,7 +70,7 @@ test('Create blog success', async () => {
 })
 
 // Load first page blog list
-test('Main page, load first page blog list', async () => {
+test('Home page, load first page blog list', async () => {
   const res = await server.get(`/api/blog/loadMore/0`).set('cookie', COOKIE)
   expect(res.body.errno).toBe(0)
   const data = res.body.data
